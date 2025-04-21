@@ -23,6 +23,19 @@ dataloader = DataLoader(dataset,
                         num_workers=LLM_CONFIG["dataloader"]["num_workers"],
                        )
 
+def create_dataloader(raw_text,cfg):
+    tokenizer = tiktoken.get_encoding(LLM_CONFIG['dataset']["encoder"])
+    dataset = LLMDataset(raw_text, tokenizer, LLM_CONFIG["dataset"])
+    dataloader = DataLoader(
+        dataset,
+        batch_size=cfg["batch_size"],
+        shuffle=cfg["shuffle"],
+        drop_last=cfg["drop_last"],
+        num_workers=cfg["num_workers"],
+    )
+    
+    return dataloader
+
 
 
 

@@ -1,0 +1,33 @@
+import torch
+import tiktoken
+
+from torch.utils.data import DataLoader
+from models.llm.dataloader.dataset import LLMDataset
+from utils.config_loader import LLM_CONFIG
+
+
+with open('/home/miguel/Desktop/research/data/the-verdict.txt', 'r') as file:
+    raw_text = file.read()
+
+
+tokenizer = tiktoken.get_encoding(LLM_CONFIG["dataset"]["encoder"])
+
+dataset = LLMDataset(raw_text,
+                     tokenizer, 
+                     LLM_CONFIG["dataset"])
+
+dataloader = DataLoader(dataset,
+                        batch_size=LLM_CONFIG["dataloader"]["batch_size"],
+                        shuffle=LLM_CONFIG["dataloader"]["shuffle"],
+                        drop_last=LLM_CONFIG["dataloader"]["drop_last"],
+                        num_workers=LLM_CONFIG["dataloader"]["num_workers"],
+                       )
+
+
+
+
+
+
+
+
+

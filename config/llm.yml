@@ -1,0 +1,36 @@
+dataset:
+  name: "llm_dataset"
+  raw_text_file: "data/raw_text.txt"
+  encoder: "gpt2"
+  max_length: 4
+  stride: 4
+
+dataloader:
+  name: "llm_dataloader"
+  batch_size: 8
+  shuffle: False
+  drop_last: True
+  num_workers: 0
+
+embeddings:
+  name: "llm_embeddings"
+  vocabulary_size: 50257
+  output_dim: 256
+  context_length: 4
+
+model:
+  name: "llm_model"
+  vocab_size: 50257
+  context_length: 1024
+  embedding_dim: 768
+  heads: 12
+  layers: 12
+  droprate: 0.1
+  qkv_bias: False
+
+trainer:
+  name: "llm_trainer"
+  train_ratio: 0.8
+  epochs: 10
+  learning_rate: 0.001
+  loggerFile: logs/llm_training.log

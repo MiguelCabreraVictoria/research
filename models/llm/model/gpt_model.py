@@ -28,9 +28,9 @@ class GPTModel(nn.Module):
         tok_embeds = self.tok_emb(in_idx)
         post_embeds = self.post_emb(torch.arange(seq_len, device=in_idx.device))
         x = tok_embeds + post_embeds
+        x = self.drop_emb(x)
         x = self.transform_blocks(x)
         x = self.final_norm(x)
-        x = self.drop_emb(x)
         logits = self.out_head(x)
         return logits
 
@@ -65,7 +65,8 @@ class TransformerBlock(nn.Module):
         self.attn = MultiHeadAttention(d_in=cfg["embedding_dim"],
                                        d_out=cfg["embedding_dim"],
                                        context_length=cfg["context_length"],
-                                       num_heads=cfg["heads"], dropout=cfg["droprate"],
+                                       num_heads=cfg["heads"],
+                                       dropout=cfg["droprate"],
                                        qkv_bias=cfg["qkv_bias"])
         self.ff = FeedForward(cfg)
         self.norm1 = LayerNorm(cfg["embedding_dim"])

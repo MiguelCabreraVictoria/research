@@ -1,7 +1,7 @@
 import torch
 import tiktoken
 import os
-from training.llm.evaluation import plot_losses
+from training.llm.plotting import plot_losses
 from utils.config_loader import LLM_CONFIG
 from models.llm.model.gpt_model import GPTModel
 from models.llm.dataloader.dataloader import create_dataloader
@@ -123,9 +123,9 @@ def generate_and_print_sample(model, tokenizer, device, start_context):
         token_ids = generate(model=model, 
                             idx=text_to_token_ids(start_context, tokenizer), 
                             max_new_tokens=15, 
-                            context_size=context_size,
-                            top_k=20,
-                            temperature=0.5)
+                            context_size=LLM_CONFIG["model"]["context_length"],
+                            top_k=40,
+                            temperature=0.7)
     decoded_text = token_ids_to_text(token_ids, tokenizer)
     print(decoded_text.replace("\n", " "))
     model.train()
@@ -186,34 +186,27 @@ def main():
                                                             start_context=start_context, 
                                                             tokenizer=tokenizer)
     
-    # print("Generating text...")
-
-    # token_ids = generate(model=model, 
-    #                 idx=text_to_token_ids("Every effort moves you", tokenizer), 
-    #                 max_new_tokens=15, 
-    #                 context_size=LLM_CONFIG["model"]["context_length"],
-    #                 top_k=25,
-    #                 temperature=1.4)
-
-    # print("Output:", token_ids_to_text(token_ids, tokenizer))
-    # print("Done generating text.")
     
-    return train_losses, val_losses, tokens_seen, model
-
-
+    return train_losses, val_losses, tokens_seen, model, optimizer
 
 
 if __name__ == "__main__":
-    train_losses, val_losses, tokens_seen, model = main()
+    train_losses, val_losses, tokens_seen, model, optimizer = main()
     epochs_tensor = torch.linspace(0, LLM_CONFIG['training']['epochs'], len(train_losses))
     plot_losses(epochs_tensor, tokens_seen, train_losses, val_losses)
 
     # Save the model
     path = os.getcwd()
-    path = os.path.join(path, "checkpoints", "llm", "llm.pth")
-    torch.save(model.state_dict(), path)
-
+    checkpoint_path = os.path.join(path, "checkpoints", "model_and_optimizer.pth")
+    torch.save({
+        "model_state_dict": model.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "train_losses": train_losses,
+        "val_losses": val_losses,
+        "tokens_seen": tokens_seen,
+    }, checkpoint_path)
     
+
 
     
                     

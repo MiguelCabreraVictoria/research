@@ -112,6 +112,8 @@ def train_model(model, train_loader, val_loader, optimizer, device, num_epochs, 
         
         generate_and_print_sample(model, tokenizer, device, start_context)
 
+        torch.cuda.empty_cache()
+
 
     return train_losses, val_losses, track_tokens_seen
 
@@ -122,10 +124,10 @@ def generate_and_print_sample(model, tokenizer, device, start_context):
     with torch.no_grad():
         token_ids = generate(model=model, 
                             idx=text_to_token_ids(start_context, tokenizer), 
-                            max_new_tokens=15, 
+                            max_new_tokens=4, 
                             context_size=LLM_CONFIG["model"]["context_length"],
                             top_k=40,
-                            temperature=0.7)
+                            temperature=1.5)
     decoded_text = token_ids_to_text(token_ids, tokenizer)
     print(decoded_text.replace("\n", " "))
     model.train()
@@ -135,7 +137,7 @@ def main():
     torch.manual_seed(123)
 
     ## Extract the dataset
-    with open('/home/miguel/Desktop/research/data/the-verdict.txt', 'r') as file:
+    with open('/home/miguel/Desktop/research/data/context.txt', 'r') as file:
         raw_text = file.read()
 
     
@@ -147,7 +149,7 @@ def main():
     optimizer = torch.optim.AdamW(model.parameters(),  lr = LLM_CONFIG['training']['learning_rate'], weight_decay=LLM_CONFIG['training']['weight_decay'])
 
     tokenizer = tiktoken.get_encoding(LLM_CONFIG["dataset"]["encoder"])
-    start_context = "Every effort moves you"
+    start_context = "The best option is "
 
     total_characters = len(raw_text)
     total_tokens = len(tokenizer.encode(raw_text))
@@ -164,6 +166,9 @@ def main():
 
     train_loader = create_dataloader(train_data, LLM_CONFIG["train_dataloader"])
     val_loader = create_dataloader(val_data, LLM_CONFIG["dataloader"])
+    
+
+
 
     # print('train_loader')
     # for x, y in train_loader:
@@ -173,18 +178,20 @@ def main():
     # for x, y in val_loader:
     #     print(x.shape, y.shape)
 
-    start_context = " Every effort moves you"
+
+        
+    start_context = "The best option is "
 
     train_losses, val_losses, tokens_seen = train_model(model, 
-                                                            train_loader, 
-                                                            val_loader, 
-                                                            optimizer, 
-                                                            device, 
-                                                            num_epochs=LLM_CONFIG['training']['epochs'], 
-                                                            eval_freq=LLM_CONFIG['training']['eval_freq'], 
-                                                            eval_iter=LLM_CONFIG['training']['eval_iter'], 
-                                                            start_context=start_context, 
-                                                            tokenizer=tokenizer)
+                                                        train_loader, 
+                                                        val_loader, 
+                                                        optimizer, 
+                                                        device, 
+                                                        num_epochs=LLM_CONFIG['training']['epochs'], 
+                                                        eval_freq=LLM_CONFIG['training']['eval_freq'], 
+                                                        eval_iter=LLM_CONFIG['training']['eval_iter'], 
+                                                        start_context=start_context, 
+                                                        tokenizer=tokenizer)
     
     
     return train_losses, val_losses, tokens_seen, model, optimizer

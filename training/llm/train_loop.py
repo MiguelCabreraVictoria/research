@@ -137,7 +137,8 @@ def main():
     torch.manual_seed(123)
 
     ## Extract the dataset
-    with open('/home/miguel/Desktop/research/data/context.txt', 'r') as file:
+
+    with open('/home/miguel/Documents/research/data/context.txt', 'r') as file:
         raw_text = file.read()
 
     

@@ -26,7 +26,7 @@ model.eval()
 
 tokenizer = tiktoken.get_encoding(LLM_CONFIG['dataset']["encoder"])
 
-prompt = "Which is better bean or chickpea ?  "
+prompt = "Which is better chickpea or bean ? "
 input_ids = tokenizer.encode(prompt)
 input_tensor = torch.tensor([input_ids], device=device)
 

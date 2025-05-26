@@ -36,7 +36,7 @@ model:
 
 training:
   name: "llm_trainer"
-  epochs: 20
+  epochs: 30
   eval_freq: 50
   eval_iter: 50
   learning_rate: 0.0004

@@ -91,6 +91,7 @@ plt.savefig(os.path.join(os.getcwd(), "images","rl","training_loss.png"))
 #     print(f"Prompt: {prompt} | Action: {action} | Probabilities: {probs}")
 
 save_path = os.path.join(os.getcwd(), "checkpoints", "rl_model.pth")
+print("Guardando checkpoints actualizados")
 torch.save({
     'model_state_dict': agent.model.state_dict(),
     'optimizer_state_dict': optimizer.state_dict(),

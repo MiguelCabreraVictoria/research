@@ -162,11 +162,17 @@ Se entrenó el modelo durante 50 épocas, alternando entre prompts diseñado esp
 
 ### Resultados de Validacion 
 
+![validacion](images/validacion.png)
+
 ### Entrenamiento nanoGPT
 
 Se oberva que aun con un numero razonable de cabezeras y capas el modelo tiende a sobreajustar rápidamanete, a pesar de ello, el modelo mostró una aprendizaje estable y una capacidad razonable para generalizar.
 
+![nanoGPT](images/llm/losses.png)
+
 ### Entrenamiento Policy Gradient
+
+![policy-loss](images/rl/training_loss.png)
 
 
 ## Ejecución del Proyecto

@@ -1,10 +1,14 @@
 import os
 import torch
+import numpy as np
 import matplotlib.pyplot as plt
 from models.rl.agent import Agent
 from utils.config_loader import LLM_CONFIG
 
 loss_history = []
+avg_rewards = []
+avg_reward_bandit_1 = []
+avg_reward_bandit_2 = []
 
 
 
@@ -45,34 +49,57 @@ optimizer = torch.optim.AdamW(
 )
 optimizer.load_state_dict(agent.checkpoints['optimizer_state_dict'])
 
+
+
 for epoch in range(num_epochs):
     agent.model.train()
     optimizer.zero_grad()
     total_loss = 0.0
+    total_reward = 0.0
+    total_reward_bandit_1 = 0.0
+    total_reward_bandit_2 = 0.0
     n_prompts = 0
 
     for prompt in prompts_bandit_1:
         action, log_prob, _ = agent.act(prompt)
-        reward = 1.0 if action in bandit_1 else -1.0
+        first_option_factor = np.random.choice([1, 0], p=[0.75, 0.25])
+        second_option_factor = np.random.choice([1, 0], p=[0.25, 0.75])
+        base_reward = 10.0
+        if action == bandit_1[0]:
+            reward = first_option_factor * base_reward
+        else:
+            reward = second_option_factor * base_reward
+
         loss = agent.policy_loss(log_prob, reward)
         total_loss += loss
+        total_reward += reward
         n_prompts += 1
 
     for prompt in prompts_bandit_2:
         action, log_prob, _ = agent.act(prompt)
-        reward = 1.0 if action in bandit_2 else -0.1
+        first_option_factor = np.random.choice([1, 0], p=[0.75, 0.25])
+        second_option_factor = np.random.choice([1, 0], p=[0.25, 0.75])
+        base_reward = 1.0
+        if action == bandit_2[0]:
+            reward = first_option_factor * base_reward
+        else:
+            reward = second_option_factor * base_reward
         loss = agent.policy_loss(log_prob, reward)
         total_loss += loss
+        total_reward += reward
         n_prompts += 1
 
     total_loss /= n_prompts
-    loss_history.append(total_loss.item())
+    avg_reward = total_reward / n_prompts
 
- 
+    loss_history.append(total_loss.item())
+    avg_rewards.append(avg_reward)
+
+
     total_loss.backward()
     optimizer.step()
 
-    print(f"Epoch {epoch+1}/{num_epochs}, Total loss: {total_loss.item():.4f}")
+    print(f"Epoch {epoch+1}/{num_epochs}, Total loss: {total_loss.item():.4f}, Average reward: {avg_reward:.4f}")
 
 plt.plot(loss_history)
 plt.xlabel('Epochs')

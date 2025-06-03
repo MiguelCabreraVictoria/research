@@ -142,13 +142,13 @@ $$
 
 ### 3.1 Implementacion del agente y 
 
-Se procedio con la implementacíon del agente de Reinforcement Learning, se encapsulo la intecciíon entre el nanoGPT y el entorno de bandit. El agente utiliza un tokenizer para procesar los prompts y generar distribuciones de probabilidad de un conjunto limitado de palabras permitidas. A partir de los logits generados por el modelo, se aplica un Softmax para luego seleccionar una accion mediante muestreo estocástico.
+Se procedio con la implementacíon del agente de Reinforcement Learning, se encapsulo la intecciíon entre el nanoGPT y el entorno de bandit como politica. El agente utiliza un tokenizer para procesar los prompts y generar distribuciones de probabilidad de un conjunto limitado de palabras permitidas. A partir de los logits generados por el modelo, se aplica un Softmax para luego seleccionar una accion mediante muestreo estocástico, para cada bandit se definieron dos recompensas base para el primer bandit fue de 10.0 y el segundo de 1.0, al igual el entorno simula la aletatoridad de las recompesas, si el agente elige la primera opción, tiene un 75% de probabilidad de recibir la recompensa base, si elige la segunda opcion, tiene un 25% de probabilidad de recibir la recompensa base
 
 ### 3.2 Implementacion algoritmo REINFORCE
 
 Se aplico el algoritmo REINFORCE utilizando una función de perdida que dado al multiplicarlo por el logaritmo de la probabilidad de la acción elegida por la recompensa obtenida, permite actualizar la politica directamente.
 
-Se entrenó el modelo durante 50 épocas, alternando entre prompts diseñado especifiacamente para cada bandit. La optimización se realizo usando el optimizador AdamW, con el fin de ajistar los pesos internos del modelo nanoGPT para aumentar la probabilidad de seleccionar las palabras correactas según la recompensa obtenida.
+Se entrenó el modelo durante 100 épocas, alternando entre prompts diseñado especifiacamente para cada bandit. La optimización se realizo usando el optimizador AdamW, con el fin de ajistar los pesos internos del modelo nanoGPT para aumentar la probabilidad de seleccionar las palabras correactas según la recompensa obtenida.
 
 
 ### Limitaciones
@@ -172,7 +172,21 @@ Se oberva que aun con un numero razonable de cabezeras y capas el modelo tiende 
 
 ### Entrenamiento Policy Gradient
 
+Se peude observar que el agente aprende a seleccionar consistentemente la opcion óptima para cada prompt, reflejando en las altas probabilidades asigandas a la acción correcta en cada contexto. Las gráficas muestran una disminucion progresiva de la funciíon de perdida y un aumento en el reward promedio, indicando que la politica se ajusta de manera correcta para maximizar la recompensa esperada.
+
 ![policy-loss](images/rl/training_loss.png)
+
+![avg-total-reward](images/rl/avg_total_reward.png)
+
+El agente aprende a maximizar la recompensa en cada contexto, alcanzando valores altos y estables para Bandit 1 y valores bajos para Bandit 2, reflejando la diferencia en las recompesas base.
+
+![reward-per-bandit](images/rl/reward_per_bandit.png)
+
+### Validacion al cruzar contextos
+
+![validacion-cruce-contextos](images/final_validacion.png)
+
+
 
 
 ## Ejecución del Proyecto

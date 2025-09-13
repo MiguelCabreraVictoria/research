@@ -8,10 +8,10 @@ from utils.config_loader import LLM_CONFIG
 
 
 # Se aplica una semilla para reproducibilidad
-seed = 42
-random.seed(seed)
-np.random.seed(seed)
-torch.manual_seed(seed)
+# seed = 42
+# random.seed(seed)
+# np.random.seed(seed)
+# torch.manual_seed(seed)
 
 loss_history = []
 avg_rewards = []

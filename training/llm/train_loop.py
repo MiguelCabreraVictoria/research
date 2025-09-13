@@ -138,7 +138,7 @@ def main():
 
     ## Extract the dataset
 
-    with open('/home/miguel/Documents/research/data/context.txt', 'r') as file:
+    with open('/home/miguel/research/data/context.txt', 'r') as file:
         raw_text = file.read()
 
     

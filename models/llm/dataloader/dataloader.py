@@ -6,7 +6,7 @@ from models.llm.dataloader.dataset import LLMDataset
 from utils.config_loader import LLM_CONFIG
 
 
-with open('/home/miguel/Documents/research/data/context.txt', 'r') as file:
+with open('/home/miguel/research/data/context.txt', 'r') as file:
     raw_text = file.read()
 
 
